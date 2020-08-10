@@ -4,7 +4,11 @@ const dumpArea = document.getElementById("dumpArea");
 dumpArea.focus();
 
 const getNotes = (callback) => {
-  chrome.storage.sync.get("notes", ({ notes = [] }) => callback(notes));
+  chrome.storage.sync.get("notes", ({ notes = [] }) => callback?.(notes));
+};
+
+const updateNotes = (notes, callback) => {
+  chrome.storage.sync.set({ notes }, callback?.());
 };
 
 const createNoteElement = (note) => {
@@ -56,7 +60,7 @@ const copyNote = (note) => {
 const deleteNote = (note) => {
   getNotes((notes) => {
     const newNotes = notes.filter(({ id }) => id !== note.id);
-    chrome.storage.sync.set({ notes: newNotes }, () => {
+    updateNotes(newNotes, () => {
       notesDiv.removeChild(document.getElementById(`note-${note.id}`));
     });
   });
@@ -74,7 +78,7 @@ const saveNote = (e) => {
       value: newNote,
     };
     const newNotes = notes.concat(newNoteObject);
-    chrome.storage.sync.set({ notes: newNotes }, () => {
+    updateNotes(newNotes, () => {
       createNoteElement(newNoteObject);
       dumpArea.value = "";
     });
