@@ -1,7 +1,7 @@
 {
-  "name": "Dump 'N Go",
+  "name": "Dump",
   "version": "1.0",
-  "description": "Paste notes now, grab them whenever",
+  "description": "Dump whatever. Grab whenever.",
   "permissions": ["activeTab", "storage", "declarativeContent"],
   "manifest_version": 2,
   "background": {
@@ -16,13 +16,13 @@
       "48": "static/icons/icon48.png",
       "64": "static/icons/icon64.png",
       "128": "static/icons/icon128.png"
-    },
-    "icons": {
-      "16": "static/icons/icon16.png",
-      "32": "static/icons/icon32.png",
-      "48": "static/icons/icon48.png",
-      "64": "static/icons/icon64.png",
-      "128": "static/icons/icon128.png"
     }
+  },
+  "icons": {
+    "16": "static/icons/icon16.png",
+    "32": "static/icons/icon32.png",
+    "48": "static/icons/icon48.png",
+    "64": "static/icons/icon64.png",
+    "128": "static/icons/icon128.png"
   }
 }
