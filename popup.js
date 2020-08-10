@@ -11,19 +11,29 @@ const updateNotes = (notes, callback) => {
   chrome.storage.sync.set({ notes }, callback?.());
 };
 
-const createNoteElement = (note) => {
-  const noteItem = document.createElement("div");
-  noteItem.innerHTML = note.value;
+const createElement = (element, attrs = {}) => {
+  const el = document.createElement(element);
+  const allProperties = Object.keys(attrs);
+  allProperties.forEach((property) => {
+    el[property] = attrs[property];
+  });
+  return el;
+};
 
-  const buttonGroup = document.createElement("div");
-  buttonGroup.className = "d-flex flex-row";
+const createNoteElement = (note) => {
+  const noteItem = createElement("div", { innerHTML: note.value });
+
+  const buttonGroup = createElement("div", {
+    className: "d-flex flex-row",
+  });
   buttonGroup.appendChild(createButton("Copy", () => copyNote(note)));
   buttonGroup.appendChild(createButton("Delete", () => deleteNote(note)));
 
-  const noteDiv = document.createElement("div");
-  noteDiv.id = `note-${note.id}`;
-  noteDiv.className =
-    "d-flex flex-row align-items-center alert alert-dark justify-content-between";
+  const noteDiv = createElement("div", {
+    id: `note-${note.id}`,
+    className:
+      "d-flex flex-row align-items-center alert alert-dark justify-content-between",
+  });
   noteDiv.appendChild(noteItem);
   noteDiv.appendChild(buttonGroup);
   notesDiv.appendChild(noteDiv);
@@ -35,10 +45,11 @@ getNotes((notes) => {
 });
 
 const createButton = (name, onclickFunc) => {
-  const btn = document.createElement("button");
-  btn.innerHTML = name;
-  btn.onclick = onclickFunc;
-  btn.className = "btn btn-light mx-2";
+  const btn = createElement("button", {
+    innerHTML: name,
+    onclick: onclickFunc,
+    className: "btn btn-light mx-2",
+  });
   return btn;
 };
 
