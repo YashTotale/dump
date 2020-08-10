@@ -3,7 +3,7 @@ const dumpArea = document.getElementById('dumpArea');
 dumpArea.focus();
 const createNoteElement = (note) => {
   const noteItem = document.createElement('div');
-  noteItem.innerHTML = note;
+  noteItem.innerHTML = note.value;
 
   const buttonGroup = document.createElement('div');
   buttonGroup.className = 'd-flex flex-row';
@@ -19,7 +19,7 @@ const createNoteElement = (note) => {
 };
 chrome.storage.sync.get('notes', ({ notes = [] }) => {
   notes.forEach((note) => {
-    createNoteElement(note.value);
+    createNoteElement(note);
   });
 });
 
@@ -32,15 +32,14 @@ const createButton = (name, onclickFunc) => {
 };
 
 const copyNote = (note) => {
-  console.log(`copying ${note}`);
-  navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
-    if (result.state == "granted" || result.state == "prompt") {
-      navigator.clipboard.writeText(note).then(
+  navigator.permissions.query({ name: 'clipboard-write' }).then((result) => {
+    if (result.state == 'granted' || result.state == 'prompt') {
+      navigator.clipboard.writeText(note.value).then(
         function () {
-          console.log("success");
+          // TODO: Success alert meesage
         },
         function () {
-          console.log("error");
+          // TODO: Failure alert message
         }
       );
     }
@@ -48,6 +47,7 @@ const copyNote = (note) => {
 };
 
 const deleteNote = (note) => {
+  // TODO: Implement function
   console.log(`deleting ${note}`);
 };
 
@@ -64,7 +64,7 @@ const saveNote = (e) => {
     };
     const newNotes = notes.concat(newNoteObject);
     chrome.storage.sync.set({ notes: newNotes }, () => {
-      createNoteElement(newNote);
+      createNoteElement(newNoteObject);
       dumpArea.value = '';
     });
   });
