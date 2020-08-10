@@ -33,6 +33,18 @@ const createButton = (name, onclickFunc) => {
 
 const copyNote = (note) => {
   console.log(`copying ${note}`);
+  navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
+    if (result.state == "granted" || result.state == "prompt") {
+      navigator.clipboard.writeText(note).then(
+        function () {
+          console.log("success");
+        },
+        function () {
+          console.log("error");
+        }
+      );
+    }
+  });
 };
 
 const deleteNote = (note) => {
