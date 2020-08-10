@@ -1,6 +1,6 @@
 const notesDiv = document.getElementById("notes");
 const dumpArea = document.getElementById("dumpArea");
-
+dumpArea.focus();
 chrome.storage.sync.get("notes", ({ notes = [] }) => {
   notes.forEach((note) => {
     const noteItem = document.createElement("p");
