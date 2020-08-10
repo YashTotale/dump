@@ -1,13 +1,28 @@
 {
   "name": "Dump 'N Go",
-  "version": "0.0.1",
-  "description": "Build an Extension!",
+  "version": "1.0",
+  "description": "Paste notes now, grab them whenever",
+  "permissions": ["activeTab", "storage", "declarativeContent"],
   "manifest_version": 2,
-  "icons": {
-    "16": "static/icons/icon16.png",
-    "32": "static/icons/icon32.png",
-    "48": "static/icons/icon48.png",
-    "64": "static/icons/icon64.png",
-    "128": "static/icons/icon128.png"
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "static/icons/icon16.png",
+      "32": "static/icons/icon32.png",
+      "48": "static/icons/icon48.png",
+      "64": "static/icons/icon64.png",
+      "128": "static/icons/icon128.png"
+    },
+    "icons": {
+      "16": "static/icons/icon16.png",
+      "32": "static/icons/icon32.png",
+      "48": "static/icons/icon48.png",
+      "64": "static/icons/icon64.png",
+      "128": "static/icons/icon128.png"
+    }
   }
 }
