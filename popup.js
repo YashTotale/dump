@@ -3,36 +3,56 @@ const dumpArea = document.getElementById('dumpArea');
 
 dumpArea.focus();
 
+const getNotes = (callback) => {
+  chrome.storage.sync.get('notes', ({ notes = [] }) => callback?.(notes));
+};
+
+const updateNotes = (notes, callback) => {
+  chrome.storage.sync.set({ notes }, callback?.());
+};
+
+const createElement = (element, attrs = {}) => {
+  const el = document.createElement(element);
+  const allProperties = Object.keys(attrs);
+  allProperties.forEach((property) => {
+    el[property] = attrs[property];
+  });
+  return el;
+};
+
 const createNoteElement = (note) => {
-  const noteItem = document.createElement('div');
-  noteItem.innerHTML = note.value;
+  const noteItem = createElement('div', {
+    innerHTML: note.value,
+    className: 'm-3',
+  });
 
-  const buttonGroup = document.createElement('div');
-  buttonGroup.className = 'd-flex flex-row';
-  buttonGroup.appendChild(createButton('Copy', () => copyNote(note), 'copy'));
-  buttonGroup.appendChild(
-    createButton('Delete', () => deleteNote(note), 'trash')
-  );
+  const buttonGroup = createElement('div', {
+    className: 'd-flex flex-row mr-1 mb-2 align-self-end float-right',
+  });
+  buttonGroup.appendChild(createButton(() => copyNote(note), 'copy'));
+  buttonGroup.appendChild(createButton(() => copyNote(note), 'trash'));
 
-  const noteDiv = document.createElement('div');
-  noteDiv.id = `note-${note.id}`;
-  noteDiv.className =
-    'd-flex flex-row align-items-center alert alert-dark justify-content-between';
+  const noteDiv = createElement('div', {
+    id: `note-${note.id}`,
+    className:
+      'd-flex flex-row align-items-center alert alert-dark justify-content-between p-0',
+  });
   noteDiv.appendChild(noteItem);
   noteDiv.appendChild(buttonGroup);
   notesDiv.appendChild(noteDiv);
 };
-chrome.storage.sync.get('notes', ({ notes = [] }) => {
+getNotes((notes) => {
   notes.forEach((note) => {
     createNoteElement(note);
   });
 });
 
-const createButton = (name, onclickFunc, icon) => {
-  const btn = document.createElement('button');
-  btn.innerHTML = `<i class="fas fa-${icon}"></i>`;
-  btn.onclick = onclickFunc;
-  btn.className = 'btn btn-dark btn-sm mx-1';
+const createButton = (onclickFunc, icon) => {
+  const btn = createElement('button', {
+    innerHTML: `<i class="fas fa-${icon}"></i>`,
+    onclick: onclickFunc,
+    className: 'btn btn-light btn-sm mx-1',
+  });
   return btn;
 };
 
@@ -52,9 +72,9 @@ const copyNote = (note) => {
 };
 
 const deleteNote = (note) => {
-  chrome.storage.sync.get('notes', ({ notes }) => {
+  getNotes((notes) => {
     const newNotes = notes.filter(({ id }) => id !== note.id);
-    chrome.storage.sync.set({ notes: newNotes }, () => {
+    updateNotes(newNotes, () => {
       notesDiv.removeChild(document.getElementById(`note-${note.id}`));
     });
   });
@@ -65,14 +85,14 @@ const saveNote = (e) => {
   if (!newNote.replace(/\s/g, '').length) {
     return;
   }
-  chrome.storage.sync.get('notes', ({ notes }) => {
+  getNotes((notes) => {
     const nextId = notes.length ? notes.slice(-1)[0].id + 1 : 1;
     newNoteObject = {
       id: nextId,
       value: newNote,
     };
     const newNotes = notes.concat(newNoteObject);
-    chrome.storage.sync.set({ notes: newNotes }, () => {
+    updateNotes(newNotes, () => {
       createNoteElement(newNoteObject);
       dumpArea.value = '';
     });
