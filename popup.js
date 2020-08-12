@@ -30,7 +30,7 @@ const createNoteElement = (note) => {
     className: 'd-flex flex-row mr-1 mb-2 align-self-end float-right',
   });
   buttonGroup.appendChild(createButton(() => copyNote(note), 'copy'));
-  buttonGroup.appendChild(createButton(() => copyNote(note), 'trash'));
+  buttonGroup.appendChild(createButton(() => deleteNote(note), 'trash'));
 
   const noteDiv = createElement('div', {
     id: `note-${note.id}`,
@@ -39,7 +39,7 @@ const createNoteElement = (note) => {
   });
   noteDiv.appendChild(noteItem);
   noteDiv.appendChild(buttonGroup);
-  notesDiv.appendChild(noteDiv);
+  notesDiv.prepend(noteDiv);
 };
 getNotes((notes) => {
   notes.forEach((note) => {
