@@ -1,14 +1,24 @@
-const notesDiv = document.getElementById('notes');
-const dumpArea = document.getElementById('dumpArea');
+const notesDiv = document.getElementById("notes");
+const dumpArea = document.getElementById("dumpArea");
 
 dumpArea.focus();
 
 const getNotes = (callback) => {
-  chrome.storage.sync.get('notes', ({ notes = [] }) => callback?.(notes));
+  chrome.storage.sync.get("notes", ({ notes = [] }) => callback?.(notes));
 };
 
 const updateNotes = (notes, callback) => {
   chrome.storage.sync.set({ notes }, callback?.());
+};
+
+const getDumpAreaVal = (callback) => {
+  chrome.storage.sync.get("dumpAreaValue", ({ dumpAreaValue = "" }) =>
+    callback?.(dumpAreaValue)
+  );
+};
+
+const updateDumpAreaVal = (dumpAreaValue, callback) => {
+  chrome.storage.sync.set({ dumpAreaValue }, callback?.());
 };
 
 const createElement = (element, attrs = {}) => {
@@ -21,21 +31,21 @@ const createElement = (element, attrs = {}) => {
 };
 
 const createNoteElement = (note) => {
-  const noteItem = createElement('div', {
+  const noteItem = createElement("div", {
     innerHTML: note.value,
-    className: 'm-3',
+    className: "m-3",
   });
 
-  const buttonGroup = createElement('div', {
-    className: 'd-flex flex-row mr-1 mb-2 align-self-end float-right',
+  const buttonGroup = createElement("div", {
+    className: "d-flex flex-row mr-1 mb-2 align-self-end float-right",
   });
-  buttonGroup.appendChild(createButton(() => copyNote(note), 'copy'));
-  buttonGroup.appendChild(createButton(() => deleteNote(note), 'trash'));
+  buttonGroup.appendChild(createButton(() => copyNote(note), "copy"));
+  buttonGroup.appendChild(createButton(() => deleteNote(note), "trash"));
 
-  const noteDiv = createElement('div', {
+  const noteDiv = createElement("div", {
     id: `note-${note.id}`,
     className:
-      'd-flex flex-row align-items-center alert alert-dark justify-content-between p-0',
+      "d-flex flex-row align-items-center alert alert-dark justify-content-between p-0",
   });
   noteDiv.appendChild(noteItem);
   noteDiv.appendChild(buttonGroup);
@@ -48,17 +58,17 @@ getNotes((notes) => {
 });
 
 const createButton = (onclickFunc, icon) => {
-  const btn = createElement('button', {
+  const btn = createElement("button", {
     innerHTML: `<i class="fas fa-${icon}"></i>`,
     onclick: onclickFunc,
-    className: 'btn btn-light btn-sm mx-1',
+    className: "btn btn-light btn-sm mx-1",
   });
   return btn;
 };
 
 const copyNote = (note) => {
-  navigator.permissions.query({ name: 'clipboard-write' }).then((result) => {
-    if (result.state == 'granted' || result.state == 'prompt') {
+  navigator.permissions.query({ name: "clipboard-write" }).then((result) => {
+    if (result.state == "granted" || result.state == "prompt") {
       navigator.clipboard.writeText(note.value).then(
         function () {
           // TODO: Success alert meesage
@@ -82,7 +92,7 @@ const deleteNote = (note) => {
 
 const saveNote = (e) => {
   const newNote = e.target.value;
-  if (!newNote.replace(/\s/g, '').length) {
+  if (!newNote.replace(/\s/g, "").length) {
     return;
   }
   getNotes((notes) => {
@@ -94,11 +104,19 @@ const saveNote = (e) => {
     const newNotes = notes.concat(newNoteObject);
     updateNotes(newNotes, () => {
       createNoteElement(newNoteObject);
-      dumpArea.value = '';
+      dumpArea.value = "";
     });
   });
 };
+
+const storeDumpValue = (e) => {
+  dumpArea.value = e.target.value;
+  updateDumpAreaVal(e.target.value);
+};
+
+getDumpAreaVal((val) => (dumpArea.value = val));
 dumpArea.onblur = saveNote;
+dumpArea.oninput = storeDumpValue;
 dumpArea.onkeypress = (e) => {
   var key = window.event.keyCode;
   // If the user has pressed enter
