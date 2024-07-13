@@ -1,4 +1,4 @@
-# Contributing to Introspect
+# Contributing to Dump
 
 Welcome, and thank you for your interest in contributing to dump!
 
